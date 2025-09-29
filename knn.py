@@ -3,11 +3,12 @@ import matplotlib.pyplot as plt
 
 ##############################   SETUP   ###############################
 ### Magic numbers to play around with
-K = 4   # K-closest
-m = 20  # rows/users
-n = 25  # cols/movies
-d = 1   # Hidden factors, d << min(m, n)
-rng_seed = 0
+K = 3    # K-closest
+m = 100  # rows/users
+n = 100  # cols/movies
+d = 2    # Hidden factors, d << min(m, n)
+rng_seed = 3
+### Change anything below this line with caution
 
 rng = np.random.default_rng(seed=rng_seed)
 u = rng.random((m, d))
@@ -118,15 +119,30 @@ def KNN(Yt: np.ndarray, K: int):
         K = nrow - 1
         raise Warning("K is larger than the number of rows")
 
-    print(f"Imputed with {K=}")
-    print(Z)
-
     return Z
 
-KNN(Yt, K)
+print(f"Imputed with {K=}")
+print(KNN(Yt, K))
 
-badness = float(np.mean(np.abs(Y-KNN(Yt, K))))
-print(f"The badness is {badness}")
+badness = lambda A, B, K: float(np.mean(np.abs(A-KNN(B, K))))
+print(f"The badness is {badness(Y, Yt, K)}")
+
+### The following lines can be commented out
+#############################   BADNESS SCORES   ##############################
+print("~~~Testing badnesses")
+badness_list = []
+for i in range(1, np.shape(Yt)[0]):
+    print(f"Testing K={i}")
+    badness_list.append(badness(Y, Yt, i))
+
+print(f"~~~Min. badness of {min(badness_list)} with K={badness_list.index(min(badness_list))}")
+
+plt.plot(badness_list)
+plt.ylabel("Badness scores")
+plt.xlabel("K values")
+plt.show()
+
+min_bad = min(badness_list)
 
 ##################################   PLOTS   ##################################
 fig, ax = plt.subplots(2, 2)
@@ -141,12 +157,12 @@ ax[0, 1].set_title("Array after being hidden")
 ax[0, 1].axis('off')
 plt.colorbar(plot1, ax=ax[0, 1])
 
-plot2 = ax[1, 0].imshow(KNN(Yt, K), cmap='gray_r', vmin=np.min(Y)-np.mean(Y)/10, aspect='equal')
+plot2 = ax[1, 0].imshow(KNN(Yt, min_bad), cmap='gray_r', vmin=np.min(Y)-np.mean(Y)/10, aspect='equal')
 ax[1, 0].set_title("Imputed array")
 ax[1, 0].axis('off')
 plt.colorbar(plot2, ax=ax[1, 0])
 
-plot3 = ax[1, 1].imshow(np.abs(Y-KNN(Yt, K)), cmap='gray_r', aspect='equal')
+plot3 = ax[1, 1].imshow(np.abs(Y-KNN(Yt, min_bad)), cmap='gray_r', aspect='equal')
 ax[1, 1].set_title("Difference (absolute value)")
 ax[1, 1].axis('off')
 plt.colorbar(plot3, ax=ax[1, 1])

@@ -8,5 +8,5 @@ You can comment out anything below line 130 as you prefer (for example if you wa
 
 - - -
 # Example
-![K score/badness graph]("./images/K score badness.png")
-![Imputed matrix](".images/Imputed matrix.png")
+![K score/badness graph]("./images/k_score_badness.png")
+![Imputed matrix](".images/imputed_matrix.png")

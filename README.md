@@ -6,7 +6,14 @@ You should see:
 
 You can comment out anything below line 130 as you prefer (for example if you want to see the imputed matrix with a certain K instead of the K that has the lowest badness score).
 
-- - -
 # Example
+With the parameters:
+```python
+K = 3    # K-closest
+m = 100  # rows/users
+n = 100  # cols/movies
+d = 2    # Hidden factors, d << min(m, n)
+rng_seed = 3
+```
 ![K score/badness graph](images/k_score_badness.png)
 ![Imputed matrix](images/imputed_matrix.png)

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 ##############################   SETUP   ###############################
 ### Magic numbers to play around with
-K = 3    # K-closest
+K = 1    # K-closest
 m = 100  # rows/users
 n = 100  # cols/movies
 d = 2    # Hidden factors, d << min(m, n)
@@ -21,14 +21,14 @@ n = 4   # cols/movies
 K = 2   # K-closest
 d = 2   # Hidden factors
 
-                # action    # comedy
+              # action    # comedy
 u = np.array([[ 0.9,        0.1],   # User 1
-            [ 0.2,        0.8],   # User 2
-            [ 0.6,        0.4]])  # User 3
+              [ 0.2,        0.8],   # User 2
+              [ 0.6,        0.4]])  # User 3
 v = np.array([[ 1.0,        0.1],   # action blockbuster
-            [ 0.3,        0.9],   # romantic comedy
-            [ 0.0,        0.9],   # pure romance
-            [ 0.8,        0.6]])  # action/comedy
+              [ 0.3,        0.9],   # romantic comedy
+              [ 0.0,        0.9],   # pure romance
+              [ 0.8,        0.6]])  # action/comedy
 """
 
 # Hölder continuous function: $f(u_{ij}, v_{ij})$
@@ -142,7 +142,8 @@ plt.ylabel("Badness scores")
 plt.xlabel("K values")
 plt.show()
 
-min_bad = min(badness_list)
+# Makes K the least bad K
+K = max(badness_list)
 
 ##################################   PLOTS   ##################################
 fig, ax = plt.subplots(2, 2)
@@ -157,12 +158,12 @@ ax[0, 1].set_title("Array after being hidden")
 ax[0, 1].axis('off')
 plt.colorbar(plot1, ax=ax[0, 1])
 
-plot2 = ax[1, 0].imshow(KNN(Yt, min_bad), cmap='gray_r', vmin=np.min(Y)-np.mean(Y)/10, aspect='equal')
+plot2 = ax[1, 0].imshow(KNN(Yt, K), cmap='gray_r', vmin=np.min(Y)-np.mean(Y)/10, aspect='equal')
 ax[1, 0].set_title("Imputed array")
 ax[1, 0].axis('off')
 plt.colorbar(plot2, ax=ax[1, 0])
 
-plot3 = ax[1, 1].imshow(np.abs(Y-KNN(Yt, min_bad)), cmap='gray_r', aspect='equal')
+plot3 = ax[1, 1].imshow(np.abs(Y-KNN(Yt, K)), cmap='gray_r', aspect='equal')
 ax[1, 1].set_title("Difference (absolute value)")
 ax[1, 1].axis('off')
 plt.colorbar(plot3, ax=ax[1, 1])

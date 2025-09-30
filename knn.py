@@ -143,7 +143,7 @@ plt.xlabel("K values")
 plt.show()
 
 # Makes K the least bad K
-K = max(badness_list)
+K = min(badness_list)
 
 ##################################   PLOTS   ##################################
 fig, ax = plt.subplots(2, 2)

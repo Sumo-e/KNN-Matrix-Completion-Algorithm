@@ -3,15 +3,16 @@ import matplotlib.pyplot as plt
 
 ##############################   SETUP   ###############################
 ### Magic numbers to play around with
-K = 1    # K-closest
-m = 100  # rows/users
-n = 100  # cols/movies
-d = 2    # Hidden factors, d << min(m, n)
+K = 1               # K-closest
+m = 100             # rows/users
+n = 100             # cols/movies
+prop_masked = 0.05   # Ratio of masked entries:revealed entries
+d = 2               # Hidden factors, d << min(m, n)
 rng_seed = 3
 ### Change anything below this line with caution
 
 rng = np.random.default_rng(seed=rng_seed)
-u = rng.random((m, d))
+u = rng.random((m, d)) * 100
 v = rng.random((n, d))
 
 ### Example:
@@ -25,15 +26,15 @@ d = 2   # Hidden factors
 u = np.array([[ 0.9,        0.1],   # User 1
               [ 0.2,        0.8],   # User 2
               [ 0.6,        0.4]])  # User 3
-v = np.array([[ 1.0,        0.1],   # action blockbuster
-              [ 0.3,        0.9],   # romantic comedy
+v = np.array([[ 0.9,        0.1],   # action blockbuster
+              [ 0.1,        0.9],   # romantic comedy
               [ 0.0,        0.9],   # pure romance
-              [ 0.8,        0.6]])  # action/comedy
+              [ 0.4,        0.6]])  # action/comedy
 """
 
 # Hölder continuous function: $f(u_{ij}, v_{ij})$
 # This is the latent structure for the signal matrix A
-f = lambda u, v: np.tanh(np.dot(u, v.T)) + 2.5
+f = lambda u, v: np.tanh(np.dot(u, v.T) + 2.5)
 
 # Signal matrix A
 A = f(u, v)
@@ -48,12 +49,11 @@ Y = np.around(A + E, 2)
 #       taking care of that for me. Besides, it's not needed for KNN.
 
 # Missingness mask matrix D
-D = rng.integers(low = 0, high = 2, size = (m, n))
+D = np.random.choice([0, 1], size=(m, n), p=[prop_masked, 1-prop_masked])
 
 # Partially-obscured outcome matrix $\tilde{Y}$
 Yt = np.copy(Y)
 Yt[D==0] = np.nan
-#Yt = np.ma.masked_array(Y, D==0, fill_value=np.nan)    # D==0 for now
 
 print("True values:")
 print(Y)
